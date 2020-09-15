@@ -15,15 +15,22 @@
         }
     ],
     "require": {
-        "php": ">=7.1.0",
-        "illuminate/config": "~5.0."
+        "php": ">=7.4.0",
+        "illuminate/config": "^5.0|^6.0|^7.0"
     },
     "require-dev": {
-        "phpunit/phpunit": "^7.0"
+        "phpunit/phpunit": "^7.0|^8.0|^9.0"
     },
     "autoload": {
         "psr-4": {
             "October\\Rain\\Config\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "October\\Rain\\Config\\ServiceProvider"
+            ]
         }
     },
     "minimum-stability": "dev",
