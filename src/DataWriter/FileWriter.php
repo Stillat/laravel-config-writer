@@ -3,7 +3,6 @@
 namespace October\Rain\Config\DataWriter;
 
 use Illuminate\Filesystem\Filesystem;
-use October\Rain\Config\DataWriter\Rewrite;
 
 class FileWriter
 {
@@ -54,19 +53,22 @@ class FileWriter
     {
         $path = $this->getPath($item, $filename, $fileExtension);
 
-        if (!$path) return false;
+        if (! $path) {
+            return false;
+        }
 
         $contents = $this->files->get($path);
         $contents = $this->rewriter->toContent($contents, [$item => $value]);
 
-        return !($this->files->put($path, $contents) === false);
+        return ! ($this->files->put($path, $contents) === false);
     }
 
     private function getPath(string $item, string $filename, string $ext = '.php'): string
     {
         $file = "{$this->defaultPath}/{$filename}{$ext}";
 
-        if ($this->files->exists($file) && $this->hasKey($file, $item)) {
+        // if ($this->files->exists($file) && $this->hasKey($file, $item)) {
+        if ($this->files->exists($file)) {
             return $file;
         }
 
@@ -83,7 +85,9 @@ class FileWriter
         $isset = false;
         while ($key = array_shift($keys)) {
             $isset = isset($vars[$key]);
-            if (is_array($vars[$key])) $vars = $vars[$key];
+            if (is_array($vars[$key])) {
+                $vars = $vars[$key];
+            }
         }
 
         return $isset;

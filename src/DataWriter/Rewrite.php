@@ -5,7 +5,7 @@ namespace October\Rain\Config\DataWriter;
 use Exception;
 
 /**
- * Configuration rewriter
+ * Configuration rewriter.
  *
  * https://github.com/daftspunk/laravel-config-writer
  *
@@ -27,7 +27,6 @@ use Exception;
  */
 class Rewrite
 {
-
     public function toFile(string $filePath, array $newValues, bool $useValidation = true): string
     {
         $contents = file_get_contents($filePath);
@@ -41,7 +40,7 @@ class Rewrite
     {
         $contents = $this->parseContent($contents, $newValues);
 
-        if (!$useValidation) {
+        if (! $useValidation) {
             return $contents;
         }
 
@@ -52,7 +51,7 @@ class Rewrite
 
             $array = $result;
             foreach ($parts as $part) {
-                if (!is_array($array) || !array_key_exists($part, $array)) {
+                if (! is_array($array) || ! array_key_exists($part, $array)) {
                     throw new Exception(sprintf('Unable to rewrite key "%s" in config, does it exist?', $key));
                 }
 
@@ -94,7 +93,7 @@ class Rewrite
         $patterns[] = $this->buildArrayExpression($key, $items);
 
         foreach ($patterns as $pattern) {
-            $result = preg_replace($pattern, '${1}${2}' . $replaceValue, $result, 1, $count);
+            $result = preg_replace($pattern, '${1}${2}'.$replaceValue, $result, 1, $count);
 
             if ($count > 0) {
                 break;
@@ -108,20 +107,15 @@ class Rewrite
     {
         if (is_string($value) && strpos($value, "'") === false) {
             $replaceValue = "'".$value."'";
-        }
-        elseif (is_string($value) && strpos($value, '"') === false) {
+        } elseif (is_string($value) && strpos($value, '"') === false) {
             $replaceValue = '"'.$value.'"';
-        }
-        elseif (is_bool($value)) {
+        } elseif (is_bool($value)) {
             $replaceValue = ($value ? 'true' : 'false');
-        }
-        elseif (is_null($value)) {
+        } elseif (is_null($value)) {
             $replaceValue = 'null';
-        }
-        elseif (is_array($value) && count($value) === count($value, COUNT_RECURSIVE)) {
+        } elseif (is_array($value) && count($value) === count($value, COUNT_RECURSIVE)) {
             $replaceValue = $this->writeArrayToPhp($value);
-        }
-        else {
+        } else {
             $replaceValue = $value;
         }
 
@@ -135,7 +129,7 @@ class Rewrite
         $result = [];
 
         foreach ($array as $value) {
-            if (!is_array($value)) {
+            if (! is_array($value)) {
                 $result[] = $this->writeValueToPhp($value);
             }
         }
@@ -161,11 +155,11 @@ class Rewrite
         // The target key closure
         $expression[] = '['.$quoteChar.']';
 
-        return '/' . implode('', $expression) . '/';
+        return '/'.implode('', $expression).'/';
     }
 
     /**
-     * Common constants only (true, false, null, integers)
+     * Common constants only (true, false, null, integers).
      */
     protected function buildConstantExpression(string $targetKey, array $arrayItems = []): string
     {
@@ -180,11 +174,11 @@ class Rewrite
         // The target value to be replaced ($3)
         $expression[] = '([tT][rR][uU][eE]|[fF][aA][lL][sS][eE]|[nN][uU][lL]{2}|[\d]+)';
 
-        return '/' . implode('', $expression) . '/';
+        return '/'.implode('', $expression).'/';
     }
 
     /**
-     * Single level arrays only
+     * Single level arrays only.
      */
     protected function buildArrayExpression(string $targetKey, array $arrayItems = []): string
     {
@@ -199,7 +193,7 @@ class Rewrite
         // The target value to be replaced ($3)
         $expression[] = '(?:[aA][rR]{2}[aA][yY]\(|[\[])([^\]|)]*)[\]|)]';
 
-        return '/' . implode('', $expression) . '/';
+        return '/'.implode('', $expression).'/';
     }
 
     protected function buildArrayOpeningExpression(array $arrayItems): string
@@ -212,14 +206,12 @@ class Rewrite
             }
 
             // Capture all opening array (non greedy)
-            $result = '(' . implode('[\s\S]*?', $itemOpen) . '[\s\S]*?)';
-        }
-        else {
+            $result = '('.implode('[\s\S]*?', $itemOpen).'[\s\S]*?)';
+        } else {
             // Gotta capture something for $1
             $result = '()';
         }
 
         return $result;
     }
-
 }
